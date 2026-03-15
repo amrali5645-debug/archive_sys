@@ -9,6 +9,7 @@ PRAGMA journal_mode=WAL;
 
 CREATE TABLE IF NOT EXISTS sources (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
     path TEXT NOT NULL UNIQUE,
     enabled INTEGER NOT NULL DEFAULT 1,
     recursive INTEGER NOT NULL DEFAULT 1,
@@ -34,6 +35,25 @@ CREATE TABLE IF NOT EXISTS contents (
     extracted_text TEXT NOT NULL DEFAULT '',
     metadata_json TEXT NOT NULL DEFAULT '{}',
     FOREIGN KEY(file_id) REFERENCES files(id)
+);
+
+CREATE TABLE IF NOT EXISTS jobs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_id INTEGER,
+    status TEXT NOT NULL,
+    indexed_count INTEGER NOT NULL DEFAULT 0,
+    failed_count INTEGER NOT NULL DEFAULT 0,
+    started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    finished_at TEXT,
+    FOREIGN KEY(source_id) REFERENCES sources(id)
+);
+
+CREATE TABLE IF NOT EXISTS errors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_path TEXT,
+    stage TEXT NOT NULL,
+    message TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE VIRTUAL TABLE IF NOT EXISTS fts_index USING fts5(

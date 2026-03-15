@@ -7,8 +7,8 @@ class SearchService:
     def __init__(self, repository: Repository) -> None:
         self.repository = repository
 
-    def search(self, query: str) -> list[SearchResult]:
+    def search(self, query: str, ext_filter: str = "", source_filter: str = "") -> list[SearchResult]:
         cleaned = query.strip()
         if not cleaned:
             return []
-        return self.repository.search(cleaned)
+        return self.repository.search(cleaned, ext_filter=ext_filter, source_filter=source_filter)
